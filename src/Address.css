@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#map {
+  /* height: 100%; */
+  position: relative;
+  height: 73.5%;
+  max-width: 600px;
+  margin-top: 10px;
+  /* border-radius: 10px; */
+  border: 4px solid black;
+  border-image: linear-gradient(
+      rgba(217, 34, 41, 255) 0%,
+      rgba(217, 34, 41, 255) 20%,
+      rgb(223, 188, 31) 20%,
+      rgb(223, 188, 31) 50%,
+      teal 50%,
+      teal 75%,
+      green 75%
+    )
+    1;
+}
+
+#description {
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+#infowindow-content .title {
+  font-weight: bold;
+}
+
+#infowindow-content {
+  display: none;
+}
+
+#map #infowindow-content {
+  display: inline;
+}
+
+.pac-card {
+  background-color: #fff;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+  margin: 10px;
+  padding: 0 0.5em;
+  font: 400 18px Roboto, Arial, sans-serif;
+  overflow: hidden;
+  /* font-family: Roboto; */
+  padding: 0;
+}
+
+#pac-container {
+  padding-bottom: 12px;
+  margin-right: 12px;
+  /* display: flex; */
+  /* gap: 25px; */
+}
+
+.pac-controls {
+  display: inline-block;
+  padding: 5px 11px;
+}
+
+.pac-controls label {
+  /* font-family: Roboto; */
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#pac-input1 {
+  text-overflow: ellipsis;
+  width: 600px;
+}
+
+#pac-input2 {
+  text-overflow: ellipsis;
+  width: 600px;
+}
+
+#title {
+  color: #fff;
+  background-color: #4d90fe;
+  font-size: 25px;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+
+@media screen and (max-width: 768px) {
+  #pac-input1 {
+    width: 330px;
+  }
+  #pac-input2 {
+    width: 330px;
+  }
+  #map {
+    width: 330px;
+    height: 250px;
+  }
+}

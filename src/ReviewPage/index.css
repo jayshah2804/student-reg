@@ -1,0 +1,334 @@
+@font-face {
+  font-family: Gotham;
+  src: url("../GothamBook.ttf");
+  src: url("../GothamMedium.ttf");
+}
+
+* {
+  font-family: Gotham;
+  text-transform: capitalize;
+}
+
+body {
+  font-family: sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* .modalBackground {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0px;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.modalContainer {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalContainer .main-container {
+  margin-left: 15px;
+}
+
+.sub-container .address-details {
+  padding-right: 15px;
+}
+
+.modalBackground label {
+  display: block;
+  margin: 5px 0;
+  text-transform: uppercase;
+  font-size: 13px;
+  margin-top: 10px;
+  color: rgb(105, 102, 102);
+}
+
+.modalBackground h4 {
+  margin: 10px 0;
+  margin-top: 30px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.modalBackground h4::after {
+  content: '';
+  width: 78px;
+  height: 2.5px;
+  background: rgb(214, 76, 76);
+  position: absolute;
+  bottom: -4px;
+  left: 1px;
+}
+
+.modalBackground input {
+  width: 250px;
+  border: none;
+  background-color: #f3f3f3;
+  padding: 5px 10px;
+}
+
+.modalBackground input:focus {
+  outline: none;
+}
+
+.modalBackground .student-photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalBackground .student-photo img {
+  width: 120px;
+  height: 120px;
+  object-fit: fill;
+  border-radius: 50%;
+}
+
+.modalBackground .sub-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+.modalContainer .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: white;
+  background-color: rgb(11, 116, 158);
+  padding: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding-left: 15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-top: 0;
+}
+
+#map-modal {
+    position: relative;
+    height: 430px;
+    width: 500px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 3px solid black;
+    border-image: linear-gradient(to right, red 25%, rgb(223, 188, 31) 25%, rgb(223, 188, 31) 50%, teal 50%, teal 75%, green 75%) 5;  
+} 
+
+.header .header-text {
+  padding: 5px;
+  text-transform: uppercase;
+}
+
+.header .close {
+  font-size: 18px;
+  cursor: pointer;
+  align-self: center;
+  padding-right: 10px;
+}
+
+.modalBackground .student-school {
+  margin-top: 20px;
+}
+
+.modalBackground .student-school input {
+  width: 560px;
+}
+
+.modalBackground .footer {
+  margin: 15px 5px;
+}
+
+.address-details input {
+  width: 500px;
+}
+
+.sub-container .student-details {
+  display: flex;
+  justify-content: space-between;
+  gap: 35px;
+}
+
+.sub-container .parent-details {
+  display: flex;
+  justify-content: space-between;
+  gap: 35px;
+}
+
+.footer .text {
+  text-transform: capitalize;
+}
+
+.text button {
+  text-transform: uppercase;
+  border-radius: 15px;
+  font-size: 11px;
+  padding: 8px 30px;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-top: 13px;
+  margin-left: 20px;
+}
+
+.text .submit-button {
+  color: white;
+  border: 1px solid rgb(15, 153, 15);
+  background-color: rgb(19, 170, 19);
+}
+
+.text .back-button {
+  color: blue;
+  border: 1px solid rgb(11, 116, 158);
+  background-color: white;
+}
+
+.text .submit-button:hover {
+  background-color: green;
+}
+
+.text .back-button:hover {
+  color: white;
+  background-color: rgb(11, 116, 158);
+}
+
+.x-button {
+  margin-right: 15px;
+  cursor: pointer;
+  float: right;
+}
+
+.mystudent-address {
+  background-color: #f3f3f3;
+  width: 500px;
+  padding: 5px 10px;
+  font-size: 13.5px;
+  color: rgb(36, 35, 35);
+  font-weight: lighter;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+@media screen and (max-width: 768px) {
+  .modalBackground {
+    display: block;
+    left: 20px;
+    top: 30px;
+  }
+
+  .modalBackground .sub-container {
+    display: block;
+  }
+
+  .sub-container .student-details {
+    display: block;
+  }
+
+  .sub-container .parent-details {
+    display: block;
+  }
+
+  .address-details {
+    width: 80%;
+  }
+
+  #map-modal {
+    width: 100%;
+    height: 300px
+  }
+
+  .mystudent-address {
+    width: 250px;
+  }
+
+  .modalBackground .student-school input {
+    width: 250px;
+  } 
+
+  .modalBackground .student-photo {
+    justify-content: flex-start;
+  }
+
+  .container-success-msg {
+    background-color: white;
+  }
+
+  .success-sub-container {
+    border: 1px solid black;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(80%);
+  }
+}
+
+.error-msg {
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgb(219 0 0 / 59%);
+  text-align: center;
+  padding: 15px;
+}
+
+.container-success-msg {
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+}
+
+.success-sub-container {
+  padding-top: 20px;
+  background-color: white;
+  border-radius: 10px;
+  width: 400px;
+  height: 220px;
+}
+
+.success-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.success-msg img {
+  width: 70px;
+  height: 70px;
+}
+
+.success-sub-container button {
+  background-color: rgba(47,175,75,255);
+  border: rgba(47,175,75,255);
+  color: white;
+  padding: 7px 40px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.success-sub-container .error {
+  background-color: rgba(217,34,41,255);
+  border: rgba(217,34,41,255);
+} */
