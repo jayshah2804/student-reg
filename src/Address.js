@@ -14,20 +14,14 @@ const Address = (props) => {
   script.async = true;
 
   document.body.appendChild(script);
-  let myInt = setInterval(() => {
-    if (document.getElementsByClassName("gm-svpc")[0]) {
-      document.getElementsByClassName("gm-svpc")[0].style.display = "none";
-      document.getElementsByClassName("gm-control-active")[0].style.display =
-        "none";
-      clearInterval(myInt);
-    }
-  });
 
   function initMap() {
     var map = new window.google.maps.Map(document.getElementById("map"), {
       center: { lat: 23.0225, lng: 72.5714 },
       zoom: 11,
-      mapTypeControl: false,
+      disableDefaultUI: true,
+      fullscreenControl: true,
+      zoomControl: true
     });
     var input1 = document.getElementById("pac-input1");
     var input2 = document.getElementById("pac-input2");
@@ -103,15 +97,19 @@ const Address = (props) => {
   window.initMap = initMap;
 
   const addressChangeHandler = () => {
-    // setTimeout(() => {
-    //   if (addressRef.current.value)
-    //     props.addressEntered(addressRef.current.value, lat, lng);
-    // }, 500);
+    setTimeout(() => {
+      if (current === "pickup" && pickupAddressRef.current.value) {
+        props.addressEntered(current, pickupAddressRef.current.value, lat, lng);
+      }
+      else if (current === "drop" && dropAddressRef.current.value) {
+        props.addressEntered(current, dropAddressRef.current.value, lat, lng);
+      }
+    }, 1000);
   };
 
   return (
-    <div style={{height: "100%"}}>
-      <h4 className="sub-header-title">Bus Stop Details</h4>
+    <div style={{ height: "100%" }}>
+      <h4 className="sub-header-title">{props.type === "sc" ? "Bus Stop Details" : "Bus/ Cab Stop Details"}</h4>
       <div id="pac-container">
         <input
           id="pac-input1"
@@ -120,7 +118,10 @@ const Address = (props) => {
           placeholder="Enter pickup stop"
           className="tags address"
           onChange={() => (current = "pickup")}
-          onBlur={addressChangeHandler}
+          onBlur={() => {
+            current = "pickup";
+            addressChangeHandler();
+          }}
         />
         <br />
         <input
@@ -130,7 +131,10 @@ const Address = (props) => {
           placeholder="Enter drop stop"
           className="tags address"
           onChange={() => (current = "drop")}
-        //   onBlur={addressChangeHandler}
+          onBlur={() => {
+            current = "drop";
+            addressChangeHandler();
+          }}
         />
       </div>
       <div id="map"></div>

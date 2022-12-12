@@ -51,6 +51,7 @@ main {
   display: flex;
   gap: 50px;
   justify-content: stretch;
+  height: 90%;
 }
 
 input {
@@ -65,7 +66,7 @@ input:focus {
 
 h4 {
   /* margin: 10px 0; */
-  margin: 5px 0;
+  margin: 1% 0;
   letter-spacing: 0.5px;
   font-size: 17px;
 }
@@ -110,12 +111,17 @@ select {
   width: 330px;
   height: 25px;
   padding-left: 5px;
+  /* margin-bottom: %; */
   text-transform: capitalize;
   /* text-indent: 10px; */
 }
 
 input[type="email"] {
   text-transform: lowercase;
+}
+
+form {
+  height: calc(100vh - 120px);
 }
 
 .tags::placeholder {
@@ -153,6 +159,7 @@ input[type="email"] {
   border-bottom-right-radius: 10px;
   font-size: 13px;
   font-weight: normal;
+  z-index: 5;
 }
 
 .nearbyLocations p {
@@ -178,7 +185,7 @@ input[type="email"] {
   display: inline-block;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-top: 13px;
+  margin-top: 30px;
 }
 
 .buttons {
@@ -283,6 +290,10 @@ input[type="email"] {
   cursor: pointer;
 }
 
+.address-line {
+  width: 680px;
+}
+
 .file-upload {
   /* border-radius: 15px; */
   border: none;
@@ -304,13 +315,22 @@ input[type="email"] {
 }
 
 @media screen and (max-width: 768px) {
+  form {
+    height: calc(100% - 120px);
+  }
+  
   main {
     display: block;
+    height: 100%;
   }
 
   .sub-container {
     display: block;
   }
+
+  .address-line {
+    width: 330px;
+  } 
 
   body {
     margin-left: 5%;
@@ -351,6 +371,10 @@ input[type="email"] {
   margin-left: auto;
   margin-right: auto;
   z-index: 999;
+}
+
+.button {
+  margin-bottom: 10px;
 }
 
 .imageCrop-footer {

@@ -14,7 +14,7 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* .modalBackground {
+.modalBackground {
   width: 100vw;
   height: 100vh;
   position: absolute;
@@ -38,8 +38,9 @@ body {
   margin-left: 15px;
 }
 
-.sub-container .address-details {
+.sub-container .review-address-details {
   padding-right: 15px;
+  margin-top: 10px;
 }
 
 .modalBackground label {
@@ -114,14 +115,14 @@ body {
 }
 
 #map-modal {
-    position: relative;
-    height: 430px;
-    width: 500px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 3px solid black;
-    border-image: linear-gradient(to right, red 25%, rgb(223, 188, 31) 25%, rgb(223, 188, 31) 50%, teal 50%, teal 75%, green 75%) 5;  
-} 
+  position: relative;
+  height: 345px;
+  width: 500px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 3px solid black;
+  border-image: linear-gradient(to right, red 25%, rgb(223, 188, 31) 25%, rgb(223, 188, 31) 50%, teal 50%, teal 75%, green 75%) 5;
+}
 
 .header .header-text {
   padding: 5px;
@@ -147,7 +148,7 @@ body {
   margin: 15px 5px;
 }
 
-.address-details input {
+.review-address-details input {
   width: 500px;
 }
 
@@ -161,6 +162,10 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 35px;
+}
+
+.parent-details .address {
+  width: 600px;
 }
 
 .footer .text {
@@ -236,7 +241,7 @@ body {
     display: block;
   }
 
-  .address-details {
+  .review-address-details {
     width: 80%;
   }
 
@@ -251,7 +256,11 @@ body {
 
   .modalBackground .student-school input {
     width: 250px;
-  } 
+  }
+
+  .parent-details .address {
+    width: 250px;
+  }
 
   .modalBackground .student-photo {
     justify-content: flex-start;
@@ -270,6 +279,7 @@ body {
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(80%);
   }
@@ -320,8 +330,8 @@ body {
 }
 
 .success-sub-container button {
-  background-color: rgba(47,175,75,255);
-  border: rgba(47,175,75,255);
+  background-color: rgba(47, 175, 75, 255);
+  border: rgba(47, 175, 75, 255);
   color: white;
   padding: 7px 40px;
   border-radius: 10px;
@@ -329,6 +339,6 @@ body {
 }
 
 .success-sub-container .error {
-  background-color: rgba(217,34,41,255);
-  border: rgba(217,34,41,255);
-} */
+  background-color: rgba(217, 34, 41, 255);
+  border: rgba(217, 34, 41, 255);
+}

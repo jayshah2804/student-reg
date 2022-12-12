@@ -12,6 +12,8 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import Address from "./Address";
 
+
+//http://localhost:3000/?type=sc&corpId=1232323&name=allen
 const defaultState = {
   schoolNameError: "",
   studentFirstNameError: "",
@@ -32,12 +34,14 @@ const defaultState = {
 let img;
 let img_placeHolder = "Passport Size photo";
 let valid = false;
-let studentAddress;
-let myLat;
-let myLng;
+let studentpickupAddress;
+let studentdropAddress;
+let pickupLatLng;
+let dropLatLng;
 let originalFile;
 let corpName = new URLSearchParams(window.location.search).get("name");
 let corpId = new URLSearchParams(window.location.search).get("corpId");
+let type = new URLSearchParams(window.location.search).get("type");
 function App() {
   const formRef = useRef();
   const schoolNameRef = useRef();
@@ -67,7 +71,7 @@ function App() {
 
   const nearbyAddressClickHandler = (e) => {
     // console.log(e.target.id);
-    console.log(isNearbyAddresses[e.target.id - 11]);
+    // console.log("here", isNearbyAddresses[e.target.id - 11]);
     cityInputRef.current.value = isNearbyAddresses[e.target.id - 11].District;
     stateInputRef.current.value = isNearbyAddresses[e.target.id - 11].Circle;
     areaInputRef.current.value = isNearbyAddresses[e.target.id - 11].Name;
@@ -209,7 +213,7 @@ function App() {
       setError((prev) => ({ ...prev, parentFirstNameError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, parentFirstNameError: "Please Enter Valid first name" }));
     }
   };
@@ -220,7 +224,7 @@ function App() {
       setError((prev) => ({ ...prev, parentMobileNumberError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, parentMobileNumberError: "Please Enter Valid Mobile number" }));
     }
   };
@@ -231,7 +235,7 @@ function App() {
       setError((prev) => ({ ...prev, parentLastNameError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, parentLastNameError: "Please Enter Valid last name" }));
     }
   };
@@ -246,7 +250,7 @@ function App() {
         parentEmailRef.current.value
       )
     ) {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, parentEmailError: "Please Enter Valid email" }));
     }
   };
@@ -257,7 +261,7 @@ function App() {
       setError((prev) => ({ ...prev, addressError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, addressError: "Please Enter Valid address" }));
     }
   };
@@ -269,12 +273,16 @@ function App() {
     setError(defaultState);
   };
 
-  const getAddress = useCallback((addressValue, lat, lng) => {
+  const getAddress = useCallback((type, addressValue, lat, lng) => {
     // console.log("data",addressValue, lat, lng);
-    myLat = lat;
-    myLng = lng;
-    studentAddress = addressValue;
-  }, []);
+    if (type === "pickup") {
+      pickupLatLng = { lat: +lat, lng: +lng };
+      studentpickupAddress = addressValue;
+    } else {
+      dropLatLng = { lat: +lat, lng: +lng };
+      studentdropAddress = addressValue;
+    }
+  }, [type]);
 
   const submitCLickHandler = (event) => {
     let studentPhotoPath = studentPhotoRef.current.value;
@@ -336,7 +344,7 @@ function App() {
         studentLastNameError: "Please Enter Valid Last name",
       }));
     }
-    if (!/^\d{1,2}$/.test(studentClassRef.current.value)) {
+    if (!/^[a-zA-Z0-9 ]{1,15}$/.test(studentClassRef.current.value)) {
       valid = false;
       setError((prev) => ({
         ...prev,
@@ -354,46 +362,47 @@ function App() {
     //   valid = false;
     //   setError(prev => ({ ...prev, studentPhotoError: "Photo must be of jpg/jpeg/png" }));
     // }
-    if (!/^[a-zA-Z ]{1,15}$/.test(parentFirstNameRef.current.value)) {
-      valid = false;
-      setError((prev) => ({
-        ...prev,
-        parentFirstNameError: "Please Enter Valid First name ",
-      }));
-    }
-    if (!/^[a-zA-Z ]{1,15}$/.test(parentLastNameRef.current.value)) {
-      valid = false;
-      setError((prev) => ({
-        ...prev,
-        parentLastNameError: "Please Enter Valid Last name",
-      }));
-    }
-    if (!/^[0]?[789]\d{9}$/.test(parentMobileNumberRef.current.value)) {
-      valid = false;
-      setError((prev) => ({
-        ...prev,
-        parentMobileNumberError: "Please Enter valid Mobile number",
-      }));
-    }
-    if (
-      !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/.test(
-        parentEmailRef.current.value
-      )
-    ) {
-      valid = false;
-      setError((prev) => ({
-        ...prev,
-        parentEmailError: "Please Enter Valid Email",
-      }));
+    if (type === "sc") {
+      if (!/^[a-zA-Z ]{1,15}$/.test(parentFirstNameRef.current.value)) {
+        valid = false;
+        setError((prev) => ({
+          ...prev,
+          parentFirstNameError: "Please Enter Valid First name ",
+        }));
+      }
+      if (!/^[a-zA-Z ]{1,15}$/.test(parentLastNameRef.current.value)) {
+        valid = false;
+        setError((prev) => ({
+          ...prev,
+          parentLastNameError: "Please Enter Valid Last name",
+        }));
+      }
+      if (!/^[0]?[789]\d{9}$/.test(parentMobileNumberRef.current.value)) {
+        valid = false;
+        setError((prev) => ({
+          ...prev,
+          parentMobileNumberError: "Please Enter valid Mobile number",
+        }));
+      }
+      if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/.test(
+          parentEmailRef.current.value
+        )
+      ) {
+        valid = false;
+        setError((prev) => ({
+          ...prev,
+          parentEmailError: "Please Enter Valid Email",
+        }));
+      }
     }
     if (valid) {
-      schoolNameRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
+      let element = document.getElementsByClassName("header")[0];
+      element.scrollIntoView({ behavior: "smooth", block: "end" });
       setFormIsValid(true);
       setError(false);
     }
+    // console.log(val);
   };
 
   const onCrop = () => {
@@ -434,15 +443,15 @@ function App() {
 
       <div className="header">
         <img src={little_image} alt="little pic" className="little-image" />
-        <p className="student-header">STUDENT REGISTRATION</p>
+        <p className="student-header">{type === "sc" ? "STUDENT REGISTRATION" : "STAFF REGISTRATION"}</p>
       </div>
       <br />
       {/* <br /> */}
-      <form ref={formRef} onSubmit={submitCLickHandler} autoComplete="off">
+      <form ref={formRef} onSubmit={submitCLickHandler} autoComplete="off" >
         <main>
           <div className="normal-data">
             <div className="student-school-details">
-              <h4 className="sub-header-title">school / institute details</h4>
+              <h4 className="sub-header-title">{type === "sc" ? "school / institute details" : "Corporate details"}</h4>
               {/* <label htmlFor="school-details" className="required">school / institute name</label> */}
               {/* <br /> */}
               <input
@@ -458,7 +467,7 @@ function App() {
             </div>
             <br />
             <div className="student-self-details">
-              <h4 className="sub-header-title">student details</h4>
+              <h4 className="sub-header-title">{(type === "sc" ? "student " : "staff ") + "details"}</h4>
               <div className="sub-container">
                 <div>
                   {/* <label htmlFor="first-name" className="required">
@@ -502,7 +511,9 @@ function App() {
                   {/* <label htmlFor="last-name" className="required">
                     Last name
                   </label> */}
-                  {/* <br /> */}
+                  {window.screen.width <= 768 &&
+                    <br />
+                  }
                   <input
                     type="text"
                     id="last-name"
@@ -516,18 +527,14 @@ function App() {
                     <p className="error">{error.studentLastNameError}</p>
                   )}
                   <br />
-                  {/* <label htmlFor="student-class" className="required">
-                    class standards
-                  </label> */}
-                  {/* <br /> */}
                   <input
                     type="text"
                     id="student-class"
                     className="tags"
                     ref={studentClassRef}
                     onChange={studentClassChangeHandler}
-                    placeholder="Enter Students class"
-                    maxLength="8"
+                    placeholder={type === "sc" ? "Enter Students class" : "Enter Staff department"}
+                    maxLength="30"
                   />
                   {error.studentClassError && (
                     <p className="error">{error.studentClassError}</p>
@@ -536,89 +543,74 @@ function App() {
               </div>
             </div>
             <br />
-            <div className="parent-details">
-              <h4 className="sub-header-title">Parent Details</h4>
-              <div className="sub-container">
-                <div>
-                  {/* <label htmlFor="first-name" className="required">
-                    First name
-                  </label> */}
-                  {/* <br /> */}
-                  <input
-                    type="text"
-                    id="first-name"
-                    className="tags"
-                    ref={parentFirstNameRef}
-                    onChange={ParentFirstNameChangeHandler}
-                    placeholder="Enter Parent's First Name"
-                    maxLength="20"
-                  />
-                  {error.parentFirstNameError && (
-                    <p className="error">{error.parentFirstNameError}</p>
-                  )}
-                  <br />
-                  {/* <label htmlFor="mobile-number" className="required">
-                    Parent Mobile Number
-                  </label> */}
-                  {/* <br /> */}
-                  <input
-                    type="number"
-                    id="mobile-name"
-                    className="tags"
-                    ref={parentMobileNumberRef}
-                    onChange={parentMobileChangeHandler}
-                    placeholder="Enter Parent's Mobile Number"
-                    autoComplete="off"
-                  />
-                  {error.parentMobileNumberError && (
-                    <p className="error">{error.parentMobileNumberError}</p>
-                  )}
-                  <br />
-                </div>
-                <div>
-                  {/* <label htmlFor="last-name" className="required">
-                    Last name
-                  </label> */}
-                  {/* <br /> */}
-                  <input
-                    type="text"
-                    id="last-name"
-                    className="tags"
-                    ref={parentLastNameRef}
-                    onChange={parentLastNameChangeHanler}
-                    placeholder="Enter Parent's Last Name"
-                    maxLength="20"
-                  />
-                  {error.parentLastNameError && (
-                    <p className="error">{error.parentLastNameError}</p>
-                  )}
-                  <br />
-                  {/* <label htmlFor="email-address" className="required">
-                    Email Address
-                  </label> */}
-                  {/* <br /> */}
-                  <input
-                    type="email"
-                    id="email-address"
-                    className="tags"
-                    ref={parentEmailRef}
-                    onChange={parentEmailChangeHanlder}
-                    placeholder="Enter Email Address"
-                    maxLength="30"
-                  />
-                  {error.parentEmailError && (
-                    <p className="error">{error.parentEmailError}</p>
-                  )}
+            {type === "sc" &&
+              <div className="parent-details">
+                <h4 className="sub-header-title">Parent Details</h4>
+                <div className="sub-container">
+                  <div>
+                    <input
+                      type="text"
+                      id="first-name"
+                      className="tags"
+                      ref={parentFirstNameRef}
+                      onChange={ParentFirstNameChangeHandler}
+                      placeholder="Enter Parent's First Name"
+                      maxLength="20"
+                    />
+                    {error.parentFirstNameError && (
+                      <p className="error">{error.parentFirstNameError}</p>
+                    )}
+                    <br />
+                    <input
+                      type="number"
+                      id="mobile-name"
+                      className="tags"
+                      ref={parentMobileNumberRef}
+                      onChange={parentMobileChangeHandler}
+                      placeholder="Enter Parent's Mobile Number"
+                      autoComplete="off"
+                    />
+                    {error.parentMobileNumberError && (
+                      <p className="error">{error.parentMobileNumberError}</p>
+                    )}
+                    <br />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      id="last-name"
+                      className="tags"
+                      ref={parentLastNameRef}
+                      onChange={parentLastNameChangeHanler}
+                      placeholder="Enter Parent's Last Name"
+                      maxLength="20"
+                    />
+                    {error.parentLastNameError && (
+                      <p className="error">{error.parentLastNameError}</p>
+                    )}
+                    <br />
+                    <input
+                      type="email"
+                      id="email-address"
+                      className="tags"
+                      ref={parentEmailRef}
+                      onChange={parentEmailChangeHanlder}
+                      placeholder="Enter Email Address"
+                      maxLength="30"
+                    />
+                    {error.parentEmailError && (
+                      <p className="error">{error.parentEmailError}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            }
             <div className="address-details">
               <h4 className="sub-header-title">Address Details</h4>
               <input
-                style={{ width: "685px" }}
                 type="text"
                 id="address"
-                className="tags"
+                className="tags address-line"
                 ref={addressRef}
                 onChange={addressChangeHandler}
                 placeholder="Enter Address Line"
@@ -636,13 +628,12 @@ function App() {
                     ref={pincodeRef}
                     placeholder="Enter Pincode"
                     onChange={pincodeChangeHandler}
-                    onBlur={() => setIsNearbyAddresses(false)}
+                  // onBlur={() => setIsNearbyAddresses(false)}
                   />
                   {error.pincodeError && (
                     <p className="error">{error.pincodeError}</p>
                   )}
                   <div className="nearbyLocations">
-                    {console.log(isNearbyAddresses)}
                     {isNearbyAddresses?.length > 0 && isNearbyAddresses.map((address, index) => (
                       <p id={index + 11} onClick={nearbyAddressClickHandler}>
                         {address.Name}
@@ -664,6 +655,9 @@ function App() {
                     {/* {console.log(isNearbyAddresses)} */}
                   </div>
                 </div>
+                {window.screen.width <= 768 &&
+                  <br />
+                }
                 <div>
                   <input
                     type="text"
@@ -690,8 +684,11 @@ function App() {
               </div>
             </div>
           </div>
+          {window.screen.width <= 768 &&
+            <br />
+          }
           <div className="location-data">
-            <Address addressEntered={getAddress} />
+            <Address addressEntered={getAddress} type={type} />
           </div>
         </main>
         <input type="submit" value="Submit" className="submit button" />
@@ -720,21 +717,27 @@ function App() {
         <Modal
           corpId={corpId}
           corpName={corpName}
+          type={type}
           myOriginalFile={val}
-          lat={myLat}
-          lng={myLng}
+          pickupLatLng={pickupLatLng}
+          dropLatLng={dropLatLng}
           address={addressRef.current.value}
-          pickupStop={studentAddress}
+          pickupStop={studentpickupAddress}
+          dropStop={studentdropAddress}
           studentPhoto={val}
           schoolname={schoolNameRef.current.value}
           studentfirstname={studentFirstNameRef.current.value}
           studentlastname={studentLastNameRef.current.value}
           studentclass={studentClassRef.current.value}
-          parentfirstname={parentFirstNameRef.current.value}
-          parentlastname={parentLastNameRef.current.value}
-          parentmobilenumber={parentMobileNumberRef.current.value}
-          parentemailaddress={parentEmailRef.current.value}
-          closeCLickHandler={setFormIsValid}
+          parentfirstname={parentFirstNameRef?.current?.value}
+          parentlastname={parentLastNameRef?.current?.value}
+          parentmobilenumber={parentMobileNumberRef?.current?.value}
+          parentemailaddress={parentEmailRef?.current?.value}
+          pincode={pincodeRef.current.value}
+          area={areaInputRef.current.value}
+          city={cityInputRef.current.value}
+          state={stateInputRef.current.value}
+          closeCLickHandler={() => setFormIsValid(false)}
         />
       )}
     </React.Fragment>
