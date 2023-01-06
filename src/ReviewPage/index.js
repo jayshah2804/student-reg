@@ -9,6 +9,7 @@ import loadingGif from "../loading-gif.gif";
 let flag = false;
 let croppedFile;
 const Modal = (props) => {
+  console.log(props);
   const script = document.createElement("script");
   script.src =
     "https://maps.googleapis.com/maps/api/js?key=AIzaSyAq88vEj-mQ9idalgeP1IuvulowkkFA-Nk&callback=myInitMap&libraries=places&v=weekly";
@@ -19,7 +20,8 @@ const Modal = (props) => {
   const [apiResponse, setApiResponse] = useState("");
 
   const authenticateUser = (data) => {
-    if (data.Message && data.Message.toLoweCase() === "success")
+    console.log(data);
+    if (data.Message && data.Message.toLowerCase() === "success")
       setApiResponse("Success");
     else setApiResponse("Error");
   };
@@ -27,29 +29,6 @@ const Modal = (props) => {
   const { isLoading, sendRequest } = useHttp();
 
   useEffect(() => {
-    // console.log({
-    //   corporateID: props.corpId,
-    //   corporateName: props.corpName,
-    //   staffFirstName: props.studentfirstname,
-    //   staffLastName: props.studentlastname,
-    //   classstandards: props.studentclass,
-    //   staffImage: props.studentPhoto,
-    //   parentFirstName: props.parentfirstname,
-    //   parentLastName: props.parentlastname,
-    //   parentsMobileNumber: props.parentmobilenumber,
-    //   parentEmailAddress: props.parentemailaddress,
-    //   address: props.address,
-    //   pickupLL: props.pickupLatLng.lat + "," + props.pickupLatLng.lng,
-    //   dropLL: props.dropLatLng.lat + "," + props.dropLatLng.lng,
-    //   staffMobileNumber: "",
-    //   pincode: props.pincode,
-    //   area: props.area,
-    //   city: props.city,
-    //   state: props.state,
-    //   emailID: "",
-    //   pickupStop: props.pickupStop,
-    //   dropStop: props.dropStop
-    // });
     if (isSubmitClicked)
       sendRequest(
         {
@@ -63,23 +42,24 @@ const Modal = (props) => {
             corporateName: props.corpName,
             staffFirstName: props.studentfirstname,
             staffLastName: props.studentlastname,
-            classstandards: props.studentclass,
+            classstandards: props.type === "sc" ? props.studentclass : "",
             staffImage: props.studentPhoto,
-            parentFirstName: props.parentfirstname,
-            parentLastName: props.parentlastname,
-            parentsMobileNumber: props.parentmobilenumber,
-            parentEmailAddress: props.parentemailaddress,
+            parentFirstName: props.type === "sc" ? props.parentfirstname : "",
+            parentLastName: props.type === "sc" ? props.parentlastname : "",
+            parentsMobileNumber: props.type === "sc" ? props.parentmobilenumber : "",
+            parentEmailAddress: props.type === "sc" ? props.parentemailaddress : "",
             address: props.address,
             pickupLL: props.pickupLatLng.lat + "," + props.pickupLatLng.lng,
             dropLL: props.dropLatLng.lat + "," + props.dropLatLng.lng,
-            staffMobileNumber: "",
+            staffMobileNumber: props.type === "sc" ? "" : props.studentclass,
             pincode: props.pincode,
             area: props.area,
             city: props.city,
             state: props.state,
             emailID: "",
             pickupStop: props.pickupStop,
-            dropStop: props.dropStop
+            dropStop: props.dropStop,
+            corporateType: props.type === "sc" ? "school" : "corporate"
           },
         },
         authenticateUser
@@ -87,6 +67,7 @@ const Modal = (props) => {
   }, [sendRequest, isSubmitClicked]);
 
   const DataSubmitHandler = () => {
+    // alert("here");
     let element = document.getElementsByClassName("header")[0];
     element.scrollIntoView({ behavior: "smooth", block: "end" });
     flag = true;

@@ -2,15 +2,19 @@ import React, { useCallback, useEffect } from "react";
 import { useRef } from "react";
 import { useState } from "react";
 import "./App.css";
-import little_image from "./Little Logo.png";
+// import little_image from "./Little Logo.png";
+import little_image from "./Little_Logo150.png";
 import Modal from "./ReviewPage";
 import { GoLocation } from "react-icons/go";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiUpload } from "react-icons/fi";
+import { BsEyeFill } from "react-icons/bs";
+import loadingGif from "./loading-gif.gif";
 
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import Address from "./Address";
+import useHttp from "./use-http/use-http";
 
 
 //http://localhost:3000/?type=sc&corpId=1232323&name=allen
@@ -33,15 +37,17 @@ const defaultState = {
 
 let img;
 let img_placeHolder = "Passport Size photo";
-let valid = false;
+let valid = true;
 let studentpickupAddress;
 let studentdropAddress;
 let pickupLatLng;
 let dropLatLng;
-let originalFile;
+let riderData;
 let corpName = new URLSearchParams(window.location.search).get("name");
 let corpId = new URLSearchParams(window.location.search).get("corpId");
 let type = new URLSearchParams(window.location.search).get("type");
+let edit = new URLSearchParams(window.location.search).get("edit");
+let editPageImgFlag = 1;
 function App() {
   const formRef = useRef();
   const schoolNameRef = useRef();
@@ -65,6 +71,7 @@ function App() {
   const [formIsValid, setFormIsValid] = useState();
   const [isNearbyAddresses, setIsNearbyAddresses] = useState([]);
   const [isPincodeChanged, setIsPincodeChanged] = useState(false);
+  const [isRender, setIsRender] = useState();
 
   const [val, setVal] = useState();
   const [myImg, setMyImg] = useState();
@@ -78,7 +85,74 @@ function App() {
     setIsNearbyAddresses([]);
   };
 
+  const editPageFileViewHandler = () => {
+    if (val)
+      viewDocument(val);
+  }
+
+  const viewDocument = (file) => {
+    let pdfWindow = window.open("");
+    pdfWindow.document.write("<html<head><title>" + "document" + "</title><style>body{margin: 0px;}iframe{border-width: 0px;}</style></head>");
+    file.split(",")[0].includes("pdf") ?
+      pdfWindow.document.write("<body><embed width='50%' height='50%' src='data:application/pdf;base64, " + encodeURI(file.split(",")[1]) + "#toolbar=0&navpanes=0&scrollbar=0'></embed></body></html>")
+      :
+      pdfWindow?.document.write(
+        `<head><title>Document preview</title></head><body><img src="${file}" width="30%" height="50%" ></body></html >`);
+  };
+
+  const authenticateUser = (data) => {
+    console.log(data);
+    if (data.Staffdetails.length > 0) {
+      riderData = data.Staffdetails;
+      let otherDetails = JSON.parse(data.Staffdetails[0].OtherDetails);
+      areaInputRef.current.value = otherDetails.Area;
+      stateInputRef.current.value = otherDetails.State;
+      cityInputRef.current.value = otherDetails.City;
+      pincodeRef.current.value = otherDetails.Pincode;
+      addressRef.current.value = otherDetails.Address;
+      studentFirstNameRef.current.value = data.Staffdetails[0].FirstName;
+      studentLastNameRef.current.value = data.Staffdetails[0].LastName;
+      if (type !== "sc")
+        studentClassRef.current.value = data.Staffdetails[0].MobileNumber;
+      if (type === "sc") {
+        studentClassRef.current.value = otherDetails.Classstandards;
+        parentFirstNameRef.current.value = otherDetails.ParentFirstName;
+        parentLastNameRef.current.value = otherDetails.ParentLastName;
+        parentMobileNumberRef.current.value = otherDetails.ParentsMobileNumber;
+        parentEmailRef.current.value = otherDetails?.ParentEmailAddress;
+      }
+      pickupLatLng = { lat: +data.Staffdetails[0].PickupLL.split(",")[0], lng: +data.Staffdetails[0].PickupLL.split(",")[1] };
+      dropLatLng = { lat: +data.Staffdetails[0].DropLL.split(",")[0], lng: +data.Staffdetails[0].DropLL.split(",")[1] };
+      studentpickupAddress = data.Staffdetails[0].PickupPoint;
+      studentdropAddress = data.Staffdetails[0].DropPoint;
+      // studentPhotoRef.current.value = "new";
+      setVal(data.Staffdetails[0].RiderImage);
+    }
+    // setIsRender(prev => !prev);
+  };
+
+  const { isLoading, sendRequest } = useHttp();
+
   useEffect(() => {
+
+    if (edit) {
+      sendRequest(
+        {
+          url: "/api/v1/Staff/GetStaffDetails",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: {
+            emailID: sessionStorage.getItem("user"),
+            mobileNumber: edit,
+            corporateType: type === "sc" ? "school" : "corporate"
+          },
+        },
+        authenticateUser
+      );
+    }
+
     if (isPincodeChanged) {
       var requestOptions = {
         method: "GET",
@@ -110,7 +184,7 @@ function App() {
       setIsNearbyAddresses(false);
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, pincodeError: "" }));
       setIsNearbyAddresses([{ Name: "Please Enter Atleast 6 digits" }]);
     }
@@ -122,7 +196,7 @@ function App() {
       setError((prev) => ({ ...prev, areaError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, areaError: "Please Enter valid area" }));
     }
   };
@@ -132,7 +206,7 @@ function App() {
       valid = true;
       setError((prev) => ({ ...prev, cityError: "" }));
     } else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, cityError: "Please Enter valid city" }));
     }
   };
@@ -143,7 +217,7 @@ function App() {
       setError((prev) => ({ ...prev, stateError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, stateError: "Please Enter valid state" }));
     }
   };
@@ -154,7 +228,7 @@ function App() {
       setError((prev) => ({ ...prev, studentFirstNameError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, studentFirstNameError: "Please Enter valid first name" }));
     }
   };
@@ -165,18 +239,19 @@ function App() {
       setError((prev) => ({ ...prev, studentLastNameError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, studentLastNameError: "Please Enter valid last name" }));
     }
   };
 
   const studentClassChangeHandler = () => {
+    // console.log(studentClassRef.current.value);
     if (studentClassRef.current.value) {
       valid = true;
       setError((prev) => ({ ...prev, studentClassError: "" }));
     }
     else {
-      valid = true;
+      valid = false;
       setError((prev) => ({ ...prev, studentClassError: "Please Enter Valid Class" }));
     }
   };
@@ -189,10 +264,11 @@ function App() {
       studentPhotoPath.includes("png")
     ) {
       valid = true;
+      editPageImgFlag = false;
       // console.log(e.target.files.file.size);
       setError((prev) => ({ ...prev, studentPhotoError: "" }));
       const [file] = e.target.files;
-      originalFile = file;
+      // originalFile = file;
       img = URL.createObjectURL(file);
       let imageName = studentPhotoPath.split("fakepath");
       img_placeHolder = imageName[1].split("\\");
@@ -286,6 +362,7 @@ function App() {
 
   const submitCLickHandler = (event) => {
     let studentPhotoPath = studentPhotoRef.current.value;
+    edit ? studentPhotoPath = "dummy" : studentPhotoPath = studentPhotoRef.current.value;
     // console.log(studentPhotoPath);
     event.preventDefault();
     if (!schoolNameRef.current.value) {
@@ -351,6 +428,7 @@ function App() {
         studentClassError: "Please Enter Valid class",
       }));
     }
+
     if (!studentPhotoPath) {
       valid = false;
       setError((prev) => ({
@@ -396,6 +474,7 @@ function App() {
         }));
       }
     }
+    // console.log(error);
     if (valid) {
       let element = document.getElementsByClassName("header")[0];
       element.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -417,29 +496,32 @@ function App() {
   };
   return (
     <React.Fragment>
+      {isLoading &&
+        <img src={loadingGif} style={{ position: "absolute", top: "40%", left: "45%", height: "80px" }} />
+      }
       {myImg && (
         <div className="modalBackgroundForImageCrop">
           <div className="modalContainerForImageCrop">
             <Cropper
               src={myImg}
-              style={{ height: 400, width: "50%" }}
+              style={{ height: 300, width: 300 }}
               initialAspectRatio={16 / 9}
               guides={false}
               crop={onCrop}
               ref={cropperRef}
             />
+            < br/>
+            <p className="text">Resultant Image:</p>{" "}
             <div className="imageCrop-footer">
-              <div className="sub-footer">
-                <span className="text">Resultant Image:</span>{" "}
+              {/* <div className="sub-footer"> */}
                 <img id="asd" src={val} className="image" alt="cropped" />
+                <button onClick={submitCLicked} className="imageCrop-submit">Submit</button>
               </div>
-              <button onClick={submitCLicked} className="imageCrop-submit">
-                Submit
-              </button>
-            </div>
+            {/* </div> */}
           </div>
         </div>
-      )}
+      )
+      }
 
       <div className="header">
         <img src={little_image} alt="little pic" className="little-image" />
@@ -502,10 +584,12 @@ function App() {
                       placeholder="Only upload PNG & JPG file"
                     />
                     <FiUpload className="logo" />
+                    <BsEyeFill className="logo eye" onClick={editPageFileViewHandler} />
                   </div>
                   {error.studentPhotoError && (
                     <p className="error">{error.studentPhotoError}</p>
                   )}
+                  {/* {edit && editPageImgFlag && <span onClick={editPageFileViewHandler} style={{ color: "grey", fontSize: "10px", position: "absolute", cursor: "pointer" }}>click to view</span>} */}
                 </div>
                 <div>
                   {/* <label htmlFor="last-name" className="required">
@@ -533,7 +617,7 @@ function App() {
                     className="tags"
                     ref={studentClassRef}
                     onChange={studentClassChangeHandler}
-                    placeholder={type === "sc" ? "Enter Students class" : "Enter Staff department"}
+                    placeholder={type === "sc" ? "Enter Students class" : "Enter Staff Mobile Number"}
                     maxLength="30"
                   />
                   {error.studentClassError && (
@@ -688,7 +772,7 @@ function App() {
             <br />
           }
           <div className="location-data">
-            <Address addressEntered={getAddress} type={type} />
+            <Address addressEntered={getAddress} type={type} edit={edit} riderData={riderData} />
           </div>
         </main>
         <input type="submit" value="Submit" className="submit button" />
@@ -702,7 +786,7 @@ function App() {
       <div className="copyright">
         <div>
           <p>
-            &#169; <span className="year">2022</span>{" "}
+            <span style={{ fontSize: "13px" }}>&#169;</span><span className="year">{new Date().getFullYear()}</span>{" "}
             <span className="lFirst">L</span>
             <span className="i">i</span>
             <span className="tFirst">t</span>
@@ -713,34 +797,36 @@ function App() {
         </div>
       </div>
       {/* {console.log("val",img)} */}
-      {formIsValid && (
-        <Modal
-          corpId={corpId}
-          corpName={corpName}
-          type={type}
-          myOriginalFile={val}
-          pickupLatLng={pickupLatLng}
-          dropLatLng={dropLatLng}
-          address={addressRef.current.value}
-          pickupStop={studentpickupAddress}
-          dropStop={studentdropAddress}
-          studentPhoto={val}
-          schoolname={schoolNameRef.current.value}
-          studentfirstname={studentFirstNameRef.current.value}
-          studentlastname={studentLastNameRef.current.value}
-          studentclass={studentClassRef.current.value}
-          parentfirstname={parentFirstNameRef?.current?.value}
-          parentlastname={parentLastNameRef?.current?.value}
-          parentmobilenumber={parentMobileNumberRef?.current?.value}
-          parentemailaddress={parentEmailRef?.current?.value}
-          pincode={pincodeRef.current.value}
-          area={areaInputRef.current.value}
-          city={cityInputRef.current.value}
-          state={stateInputRef.current.value}
-          closeCLickHandler={() => setFormIsValid(false)}
-        />
-      )}
-    </React.Fragment>
+      {
+        formIsValid && (
+          <Modal
+            corpId={corpId}
+            corpName={corpName}
+            type={type}
+            myOriginalFile={val}
+            pickupLatLng={pickupLatLng}
+            dropLatLng={dropLatLng}
+            address={addressRef.current.value}
+            pickupStop={studentpickupAddress}
+            dropStop={studentdropAddress}
+            studentPhoto={val}
+            schoolname={schoolNameRef.current.value}
+            studentfirstname={studentFirstNameRef.current.value}
+            studentlastname={studentLastNameRef.current.value}
+            studentclass={studentClassRef.current.value}
+            parentfirstname={parentFirstNameRef?.current?.value}
+            parentlastname={parentLastNameRef?.current?.value}
+            parentmobilenumber={parentMobileNumberRef?.current?.value}
+            parentemailaddress={parentEmailRef?.current?.value}
+            pincode={pincodeRef.current.value}
+            area={areaInputRef.current.value}
+            city={cityInputRef.current.value}
+            state={stateInputRef.current.value}
+            closeCLickHandler={() => setFormIsValid(false)}
+          />
+        )
+      }
+    </React.Fragment >
   );
 }
 

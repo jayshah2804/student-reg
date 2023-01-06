@@ -4,15 +4,20 @@
   box-sizing: border-box;
 }
 
+#jay {
+  height: 73.5%;
+  position: relative;
+}
+
 #map {
   /* height: 100%; */
   position: relative;
-  height: 73.5%;
-  max-width: 600px;
+  height: 100%;
+  max-width: 606px;
   margin-top: 10px;
-  /* border-radius: 10px; */
-  border: 4px solid black;
-  border-image: linear-gradient(
+  border-radius: 10px;
+  /* border: 4px solid black; */
+  /* border-image: linear-gradient(
       rgba(217, 34, 41, 255) 0%,
       rgba(217, 34, 41, 255) 20%,
       rgb(223, 188, 31) 20%,
@@ -21,7 +26,35 @@
       teal 75%,
       green 75%
     )
-    1;
+    1; */
+}
+
+#jay::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: -0.7%;
+  top: -1.25%;
+  width: 100.45%;
+  height: 102.3%;
+  border-radius: 10px;
+  background-color: #399953;
+  background-repeat: no-repeat;
+  background-size: 50% 50%, 50% 50%;
+  background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+  background-image: linear-gradient(rgb(226, 44, 29), rgb(226, 44, 29)), linear-gradient(rgba(245, 174, 48, 255), rgba(245, 174, 48, 255)), linear-gradient(rgba(34, 137, 203, 255), rgba(34, 137, 203, 255));
+}
+
+#jay::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0px;
+  top: 0px;
+  width: calc(100% - 7px);
+  height: calc(100%);
+  background: white;
+  border-radius: 10px;
 }
 
 #description {
@@ -95,8 +128,13 @@
   #pac-input1 {
     width: 330px;
   }
+
   #pac-input2 {
     width: 330px;
+  }
+  #jay {
+    width: 336px;
+    height: 250px;
   }
   #map {
     width: 330px;

@@ -1,10 +1,11 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import React from "react";
 import "./Address.css";
 
 let lat;
 let lng;
 let current = "";
+let flag = 2;
 const Address = (props) => {
   const pickupAddressRef = useRef();
   const dropAddressRef = useRef();
@@ -15,10 +16,18 @@ const Address = (props) => {
 
   document.body.appendChild(script);
 
+  useEffect(() => {
+    // console.log("a", props.riderData);
+    if (props.edit && props.riderData) {
+      pickupAddressRef.current.value = props.riderData[0]?.PickupPoint;
+      dropAddressRef.current.value = props.riderData[0]?.DropPoint;
+    }
+  },);
+
   function initMap() {
     var map = new window.google.maps.Map(document.getElementById("map"), {
-      center: { lat: 23.0225, lng: 72.5714 },
-      zoom: 11,
+      center: props.edit ? { lat: +props.riderData[0].DropLL.split(",")[0], lng: +props.riderData[0].DropLL.split(",")[1] } : { lat: 23.0225, lng: 72.5714 },
+      zoom: props.edit ? 15 : 11,
       disableDefaultUI: true,
       fullscreenControl: true,
       zoomControl: true
@@ -37,11 +46,23 @@ const Address = (props) => {
     var infowindowContent = document.getElementById("infowindow-content");
     infowindow.setContent(infowindowContent);
     var marker = new window.google.maps.Marker({
+      position: props.edit ? { lat: +props.riderData[0].DropLL.split(",")[0], lng: +props.riderData[0].DropLL.split(",")[1] } : "",
       map: map,
       draggable: true,
       animation: window.google.maps.Animation.DROP,
+      // myTitle: props.edit ? props.riderData[0].DropPoint : "",
       anchorPoint: new window.google.maps.Point(0, -29),
     });
+
+    // if (props.edit && flag > 0) {
+    //   const infoWindow = new window.google.maps.InfoWindow();
+    //   marker.addListener("mouseover", () => {
+    //     infoWindow.close();
+    //     infoWindow.setContent(marker.myTitle);
+    //     infoWindow.open(marker.getMap(), marker);
+    //   });
+    //   flag--;
+    // }
 
     window.google.maps.event.addListener(marker, "dragend", function (marker) {
       geocoder.geocode(
@@ -58,7 +79,7 @@ const Address = (props) => {
           addressChangeHandler();
         }
       );
-      console.log(marker.formatted_address);
+      // console.log(marker.formatted_address);
       lat = marker.latLng.lat();
       lng = marker.latLng.lng();
     });
@@ -137,7 +158,9 @@ const Address = (props) => {
           }}
         />
       </div>
-      <div id="map"></div>
+      <div id="jay">
+        <div id="map"></div>
+      </div>
       <div id="infowindow-content">
         <span id="place-name" className="title"></span>
         <br />

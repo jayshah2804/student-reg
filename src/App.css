@@ -21,10 +21,10 @@ body {
 }
 
 .little-image {
-  width: 142px;
-  height: 73px;
+  /* width: 142px; */
+  height: 76px;
   /* flex: 1; */
-  object-fit: cover;
+  /* object-fit: cover; */
 }
 
 .student-header {
@@ -35,16 +35,13 @@ body {
   text-align: center;
   flex: 7;
   border-bottom: 3px solid black;
-  border-image: linear-gradient(
-      to right,
-      rgba(217, 34, 41, 255) 25%,
-      rgba(235, 188, 31, 255) 25%,
-      rgba(235, 188, 31, 255) 50%,
-      teal 50%,
-      teal 75%,
-      green 75%
-    )
-    5;
+  border-image: linear-gradient(to right,
+      rgb(226, 44, 29) 25%,
+      rgba(245, 174, 48, 255) 25%,
+      rgba(245, 174, 48, 255) 50%,
+      rgba(34, 137, 203, 255) 50%,
+      rgba(34, 137, 203, 255) 75%,
+      rgba(42, 149, 69, 255) 75%) 5;
 }
 
 main {
@@ -310,15 +307,24 @@ form {
 
 .file-upload .logo {
   position: absolute;
-  right: 10px;
+  right: 25px;
   font-size: 14px;
+}
+
+.file-upload .eye {
+  right: 0px;
+  cursor: pointer;
+}
+
+.file-upload .eye:hover {
+  transform: scale(1.1);
 }
 
 @media screen and (max-width: 768px) {
   form {
     height: calc(100% - 120px);
   }
-  
+
   main {
     display: block;
     height: 100%;
@@ -330,7 +336,7 @@ form {
 
   .address-line {
     width: 330px;
-  } 
+  }
 
   body {
     margin-left: 5%;
@@ -348,6 +354,13 @@ form {
 
   .imageCrop-footer .sub-footer img {
     margin-left: 0;
+  }
+
+  .little-image {
+    width: 117px;
+    height: 60px;
+    /* flex: 1; */
+    object-fit: cover;
   }
 }
 
@@ -399,7 +412,7 @@ form {
 .imageCrop-footer .image {
   width: 100px;
   height: 100px;
-  margin-left: 50%;
+  /* margin-left: 50%; */
   margin-top: 10px;
 }
 
