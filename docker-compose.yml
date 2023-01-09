@@ -1,10 +1,9 @@
-version: '3.8'
-
+version: '3'
 services:
   app: 
-    container_name: docker-react-c
-    image: docker-react-i
+    container_name: students-india
+    image: students-india
     build: 
       context: .
     ports:
-      - 8080:80
+      - 3098:80
